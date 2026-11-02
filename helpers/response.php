@@ -9,3 +9,14 @@ echo json_encode([
 ]);
 exit();
 }
+
+function gagalQuery($koneksi) {
+    error_log("Database Error: " . mysqli_error($koneksi));
+
+    sendResponse(
+        false,
+        "Terjadi kesalahan pada server",
+        null,
+        500
+    );
+}
