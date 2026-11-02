@@ -1,12 +1,7 @@
-<<<<<<< HEAD
-=======
-
->>>>>>> 9fdc86cffa23e31bf201090b8d468d5589a4b131
 <?php
 
 require_once "../config.php";
 require_once "../helpers/response.php";
-<<<<<<< HEAD
 require_once "../helpers/security.php";
 
 mysqli_set_charset($koneksi, "utf8mb4");
@@ -63,8 +58,6 @@ switch ($method) {
             mysqli_stmt_execute($stmt);
 
             $r = mysqli_stmt_get_result($stmt);
-
-=======
 
 $method = $_SERVER['REQUEST_METHOD'];
 switch ($method) {
@@ -128,14 +121,12 @@ switch ($method) {
             // Ini kalau query gagal
             if (!$r)
                 gagalQuery($koneksi);
->>>>>>> 9fdc86cffa23e31bf201090b8d468d5589a4b131
             $data = [];
 
             while ($row = mysqli_fetch_assoc($r)) {
                 $data[] = $row;
             }
 
-<<<<<<< HEAD
             sendResponse(true, "Berhasil", $data, 200);
             exit;
         }
@@ -161,7 +152,6 @@ switch ($method) {
             mysqli_stmt_execute($stmt);
             $r = mysqli_stmt_get_result($stmt);
 
-=======
             sendResponse(
                 true,
                 "Berhasil",
@@ -206,14 +196,12 @@ switch ($method) {
             if (!$r)
                 gagalQuery($koneksi);
 
->>>>>>> 9fdc86cffa23e31bf201090b8d468d5589a4b131
             $data = [];
 
             while ($row = mysqli_fetch_assoc($r)) {
                 $data[] = $row;
             }
 
-<<<<<<< HEAD
             sendResponse(true, "Berhasil", $data, 200);
             exit;
         }
@@ -225,7 +213,6 @@ switch ($method) {
         );
 
         if (!$r) handleDatabaseError($koneksi);
-=======
             sendResponse(
                 true,
                 "Berhasil",
@@ -246,7 +233,6 @@ switch ($method) {
 
         if (!$r)
             gagalQuery($koneksi);
->>>>>>> 9fdc86cffa23e31bf201090b8d468d5589a4b131
 
         $data = [];
 
@@ -254,7 +240,6 @@ switch ($method) {
             $data[] = $row;
         }
 
-<<<<<<< HEAD
         sendResponse(true, "Berhasil", $data, 200);
         exit;
 
@@ -397,7 +382,6 @@ switch ($method) {
         sendResponse(false, "Method tidak diizinkan", null, 405);
         exit;
 }
-=======
         sendResponse(
             true,
             "Berhasil",
@@ -416,4 +400,3 @@ switch ($method) {
         );
      break;
 }
->>>>>>> 9fdc86cffa23e31bf201090b8d468d5589a4b131
