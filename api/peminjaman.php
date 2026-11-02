@@ -2,7 +2,6 @@
 
 require_once "../config.php";
 require_once "../helpers/response.php";
-require_once "../helpers/security.php";
 
 mysqli_set_charset($koneksi, "utf8mb4");
 
@@ -24,9 +23,14 @@ switch ($method) {
         // Get by ID
         if (isset($_GET['id'])) {
 
-            $id = getValidId();
+            $id = (int) $_GET['id'];
 
-            $stmt = prepareQuery($koneksi,
+            if ($id <= 0) {
+                sendResponse(false, "ID tidak valid", null, 400);
+                exit;
+            }
+
+            $stmt = mysqli_prepare($koneksi,
                 $query . " WHERE p.id = ?"
             );
 
@@ -37,7 +41,8 @@ switch ($method) {
             $data = mysqli_fetch_assoc($r);
 
             if (!$data) {
-                securityError("Peminjaman tidak ditemukan", 404);
+                sendResponse(false, "Peminjaman tidak ditemukan", null, 404);
+                exit;
             }
 
             sendResponse(true, "Berhasil", $data, 200);
@@ -47,15 +52,10 @@ switch ($method) {
         // Search
         if (isset($_GET['search'])) {
 
-            $search = $_GET['search'];
+            $search = trim($_GET['search']);
+            $term = "%" . $search . "%";
 
-            if (!is_string($search)) {
-                securityError("Search harus berupa teks", 400);
-            }
-
-            $term = "%" . trim($search) . "%";
-
-            $stmt = prepareQuery($koneksi,
+            $stmt = mysqli_prepare($koneksi,
                 $query . "
                 WHERE a.nama_anggota LIKE ?
                 OR b.judul_buku LIKE ?
@@ -86,9 +86,11 @@ switch ($method) {
         // Limit & Offset
         if (isset($_GET['page']) || isset($_GET['limit'])) {
 
-            $paging = getPagination();
+            $page = max(1, (int) ($_GET['page'] ?? 1));
+            $limit = max(1, (int) ($_GET['limit'] ?? 10));
+            $offset = ($page - 1) * $limit;
 
-            $stmt = prepareQuery($koneksi,
+            $stmt = mysqli_prepare($koneksi,
                 $query . "
                 ORDER BY p.id DESC
                 LIMIT ? OFFSET ?"
@@ -97,8 +99,8 @@ switch ($method) {
             mysqli_stmt_bind_param(
                 $stmt,
                 "ii",
-                $paging['limit'],
-                $paging['offset']
+                $limit,
+                $offset
             );
 
             mysqli_stmt_execute($stmt);
@@ -121,7 +123,10 @@ switch ($method) {
             $query . " ORDER BY p.id DESC"
         );
 
-        if (!$r) handleDatabaseError($koneksi);
+        if (!$r) {
+            sendResponse(false, "Gagal mengambil data", null, 500);
+            exit;
+        }
 
         $data = [];
 
@@ -136,23 +141,56 @@ switch ($method) {
     // ================= POST =================
     case 'POST':
 
-        $input = getJsonInput();
+        $input = json_decode(file_get_contents("php://input"), true);
 
-        $id_anggota = requiredInt($input, 'id_anggota');
-        $id_buku = requiredInt($input, 'id_buku');
+        if (!is_array($input)) {
+            sendResponse(false, "Format JSON tidak valid", null, 400);
+            exit;
+        }
 
-        $tanggal_pinjam = requiredDate($input, 'tanggal_pinjam');
-        $tanggal_kembali = requiredDate($input, 'tanggal_kembali');
+        $id_anggota = (int) ($input['id_anggota'] ?? 0);
+        $id_buku = (int) ($input['id_buku'] ?? 0);
+
+        $tanggal_pinjam = trim($input['tanggal_pinjam'] ?? '');
+        $tanggal_kembali = trim($input['tanggal_kembali'] ?? '');
+
+        // Validasi input
+        if (
+            $id_anggota <= 0 ||
+            $id_buku <= 0 ||
+            $tanggal_pinjam == '' ||
+            $tanggal_kembali == ''
+        ) {
+            sendResponse(false, "Semua data wajib diisi dengan benar", null, 400);
+            exit;
+        }
+
+        // Validasi tanggal
+        $formatPinjam = DateTime::createFromFormat('!Y-m-d', $tanggal_pinjam);
+        $formatKembali = DateTime::createFromFormat('!Y-m-d', $tanggal_kembali);
+
+        if (
+            !$formatPinjam ||
+            $formatPinjam->format('Y-m-d') !== $tanggal_pinjam ||
+            !$formatKembali ||
+            $formatKembali->format('Y-m-d') !== $tanggal_kembali
+        ) {
+            sendResponse(false, "Format tanggal tidak valid", null, 400);
+            exit;
+        }
 
         if ($tanggal_kembali < $tanggal_pinjam) {
-            securityError(
+            sendResponse(
+                false,
                 "Tanggal kembali tidak boleh sebelum tanggal pinjam",
+                null,
                 400
             );
+            exit;
         }
 
         // Cek anggota
-        $stmt = prepareQuery($koneksi,
+        $stmt = mysqli_prepare($koneksi,
             "SELECT id FROM anggota WHERE id = ?"
         );
 
@@ -162,11 +200,12 @@ switch ($method) {
         $cek = mysqli_stmt_get_result($stmt);
 
         if (mysqli_num_rows($cek) == 0) {
-            securityError("Anggota tidak ditemukan", 404);
+            sendResponse(false, "Anggota tidak ditemukan", null, 404);
+            exit;
         }
 
         // Cek buku
-        $stmt = prepareQuery($koneksi,
+        $stmt = mysqli_prepare($koneksi,
             "SELECT id FROM buku WHERE id = ?"
         );
 
@@ -176,11 +215,12 @@ switch ($method) {
         $cek = mysqli_stmt_get_result($stmt);
 
         if (mysqli_num_rows($cek) == 0) {
-            securityError("Buku tidak ditemukan", 404);
+            sendResponse(false, "Buku tidak ditemukan", null, 404);
+            exit;
         }
 
         // Insert peminjaman
-        $stmt = prepareQuery($koneksi,
+        $stmt = mysqli_prepare($koneksi,
             "INSERT INTO peminjaman
             (id_anggota, id_buku, tanggal_pinjam, tanggal_kembali)
             VALUES (?, ?, ?, ?)"
@@ -207,136 +247,8 @@ switch ($method) {
             exit;
         }
 
-        handleDatabaseError($koneksi);
-        break;
-
-
-    // ================= PUT =================
-    case 'PUT':
-
-        $id = getValidId();
-        $input = getJsonInput();
-
-        $id_anggota = requiredInt($input, 'id_anggota');
-        $id_buku = requiredInt($input, 'id_buku');
-
-        $tanggal_pinjam = requiredDate($input, 'tanggal_pinjam');
-        $tanggal_kembali = requiredDate($input, 'tanggal_kembali');
-
-        if ($tanggal_kembali < $tanggal_pinjam) {
-            securityError(
-                "Tanggal kembali tidak boleh sebelum tanggal pinjam",
-                400
-            );
-        }
-
-        // Cek peminjaman
-        $stmt = prepareQuery($koneksi,
-            "SELECT id FROM peminjaman WHERE id = ?"
-        );
-
-        mysqli_stmt_bind_param($stmt, "i", $id);
-        mysqli_stmt_execute($stmt);
-
-        $cek = mysqli_stmt_get_result($stmt);
-
-        if (mysqli_num_rows($cek) == 0) {
-            securityError("Peminjaman tidak ditemukan", 404);
-        }
-
-        // Cek anggota
-        $stmt = prepareQuery($koneksi,
-            "SELECT id FROM anggota WHERE id = ?"
-        );
-
-        mysqli_stmt_bind_param($stmt, "i", $id_anggota);
-        mysqli_stmt_execute($stmt);
-
-        $cek = mysqli_stmt_get_result($stmt);
-
-        if (mysqli_num_rows($cek) == 0) {
-            securityError("Anggota tidak ditemukan", 404);
-        }
-
-        // Cek buku
-        $stmt = prepareQuery($koneksi,
-            "SELECT id FROM buku WHERE id = ?"
-        );
-
-        mysqli_stmt_bind_param($stmt, "i", $id_buku);
-        mysqli_stmt_execute($stmt);
-
-        $cek = mysqli_stmt_get_result($stmt);
-
-        if (mysqli_num_rows($cek) == 0) {
-            securityError("Buku tidak ditemukan", 404);
-        }
-
-        // Update peminjaman
-        $stmt = prepareQuery($koneksi,
-            "UPDATE peminjaman
-             SET id_anggota = ?,
-                 id_buku = ?,
-                 tanggal_pinjam = ?,
-                 tanggal_kembali = ?
-             WHERE id = ?"
-        );
-
-        mysqli_stmt_bind_param(
-            $stmt,
-            "iissi",
-            $id_anggota,
-            $id_buku,
-            $tanggal_pinjam,
-            $tanggal_kembali,
-            $id
-        );
-
-        if (mysqli_stmt_execute($stmt)) {
-
-            sendResponse(
-                true,
-                "Data peminjaman berhasil diperbarui",
-                ["id" => $id],
-                200
-            );
-
-            exit;
-        }
-
-        handleDatabaseError($koneksi);
-        break;
-
-
-    // ================= DELETE =================
-    case 'DELETE':
-
-        $id = getValidId();
-
-        $stmt = prepareQuery($koneksi,
-            "DELETE FROM peminjaman WHERE id = ?"
-        );
-
-        mysqli_stmt_bind_param($stmt, "i", $id);
-
-        if (mysqli_stmt_execute($stmt)) {
-
-            if (mysqli_stmt_affected_rows($stmt) == 0) {
-                securityError("Peminjaman tidak ditemukan", 404);
-            }
-
-            sendResponse(
-                true,
-                "Data peminjaman berhasil dihapus",
-                ["id" => $id],
-                200
-            );
-
-            exit;
-        }
-
-        handleDatabaseError($koneksi);
-        break;
+        sendResponse(false, "Gagal menyimpan data peminjaman", null, 500);
+        exit;
 
 
     default:

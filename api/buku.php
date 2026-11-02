@@ -2,7 +2,6 @@
 
 require_once "../config.php";
 require_once "../helpers/response.php";
-require_once "../helpers/security.php";
 
 mysqli_set_charset($koneksi, "utf8mb4");
 
@@ -16,9 +15,14 @@ switch ($method) {
         // Get by ID
         if (isset($_GET['id'])) {
 
-            $id = getValidId();
+            $id = (int) $_GET['id'];
 
-            $stmt = prepareQuery($koneksi,
+            if ($id <= 0) {
+                sendResponse(false, "ID tidak valid", null, 400);
+                exit;
+            }
+
+            $stmt = mysqli_prepare($koneksi,
                 "SELECT * FROM buku WHERE id = ?"
             );
 
@@ -29,7 +33,8 @@ switch ($method) {
             $data = mysqli_fetch_assoc($r);
 
             if (!$data) {
-                securityError("Buku tidak ditemukan", 404);
+                sendResponse(false, "Buku tidak ditemukan", null, 404);
+                exit;
             }
 
             sendResponse(true, "Berhasil", $data, 200);
@@ -39,15 +44,10 @@ switch ($method) {
         // Search
         if (isset($_GET['search'])) {
 
-            $search = $_GET['search'];
+            $search = trim($_GET['search']);
+            $term = "%" . $search . "%";
 
-            if (!is_string($search)) {
-                securityError("Search harus berupa teks", 400);
-            }
-
-            $term = "%" . trim($search) . "%";
-
-            $stmt = prepareQuery($koneksi,
+            $stmt = mysqli_prepare($koneksi,
                 "SELECT * FROM buku
                  WHERE isbn LIKE ?
                  OR judul_buku LIKE ?
@@ -80,9 +80,11 @@ switch ($method) {
         // Limit & Offset
         if (isset($_GET['page']) || isset($_GET['limit'])) {
 
-            $paging = getPagination();
+            $page = max(1, (int) ($_GET['page'] ?? 1));
+            $limit = max(1, (int) ($_GET['limit'] ?? 10));
+            $offset = ($page - 1) * $limit;
 
-            $stmt = prepareQuery($koneksi,
+            $stmt = mysqli_prepare($koneksi,
                 "SELECT * FROM buku
                  ORDER BY id DESC
                  LIMIT ? OFFSET ?"
@@ -91,8 +93,8 @@ switch ($method) {
             mysqli_stmt_bind_param(
                 $stmt,
                 "ii",
-                $paging['limit'],
-                $paging['offset']
+                $limit,
+                $offset
             );
 
             mysqli_stmt_execute($stmt);
@@ -114,7 +116,10 @@ switch ($method) {
             "SELECT * FROM buku ORDER BY id DESC"
         );
 
-        if (!$r) handleDatabaseError($koneksi);
+        if (!$r) {
+            sendResponse(false, "Gagal mengambil data", null, 500);
+            exit;
+        }
 
         $data = [];
 
@@ -129,14 +134,29 @@ switch ($method) {
     // ================= POST =================
     case 'POST':
 
-        $input = getJsonInput();
+        $input = json_decode(file_get_contents("php://input"), true);
 
-        $isbn = requiredString($input, 'isbn', 30);
-        $judul_buku = requiredString($input, 'judul_buku', 100);
-        $pengarang = requiredString($input, 'pengarang', 100);
-        $tahun_terbit = requiredYear($input, 'tahun_terbit');
+        if (!is_array($input)) {
+            sendResponse(false, "Format JSON tidak valid", null, 400);
+            exit;
+        }
 
-        $stmt = prepareQuery($koneksi,
+        $isbn = trim($input['isbn'] ?? '');
+        $judul_buku = trim($input['judul_buku'] ?? '');
+        $pengarang = trim($input['pengarang'] ?? '');
+        $tahun_terbit = trim((string) ($input['tahun_terbit'] ?? ''));
+
+        if (
+            $isbn == '' ||
+            $judul_buku == '' ||
+            $pengarang == '' ||
+            $tahun_terbit == ''
+        ) {
+            sendResponse(false, "Semua data buku wajib diisi", null, 400);
+            exit;
+        }
+
+        $stmt = mysqli_prepare($koneksi,
             "INSERT INTO buku
             (isbn, judul_buku, pengarang, tahun_terbit)
             VALUES (?, ?, ?, ?)"
@@ -163,100 +183,8 @@ switch ($method) {
             exit;
         }
 
-        handleDatabaseError($koneksi);
-        break;
-
-
-    // ================= PUT =================
-    case 'PUT':
-
-        $id = getValidId();
-        $input = getJsonInput();
-
-        $isbn = requiredString($input, 'isbn', 30);
-        $judul_buku = requiredString($input, 'judul_buku', 100);
-        $pengarang = requiredString($input, 'pengarang', 100);
-        $tahun_terbit = requiredYear($input, 'tahun_terbit');
-
-        // Cek buku
-        $stmt = prepareQuery($koneksi,
-            "SELECT id FROM buku WHERE id = ?"
-        );
-
-        mysqli_stmt_bind_param($stmt, "i", $id);
-        mysqli_stmt_execute($stmt);
-
-        $cek = mysqli_stmt_get_result($stmt);
-
-        if (mysqli_num_rows($cek) == 0) {
-            securityError("Buku tidak ditemukan", 404);
-        }
-
-        // Update buku
-        $stmt = prepareQuery($koneksi,
-            "UPDATE buku
-             SET isbn = ?,
-                 judul_buku = ?,
-                 pengarang = ?,
-                 tahun_terbit = ?
-             WHERE id = ?"
-        );
-
-        mysqli_stmt_bind_param(
-            $stmt,
-            "ssssi",
-            $isbn,
-            $judul_buku,
-            $pengarang,
-            $tahun_terbit,
-            $id
-        );
-
-        if (mysqli_stmt_execute($stmt)) {
-
-            sendResponse(
-                true,
-                "Data buku berhasil diperbarui",
-                ["id" => $id],
-                200
-            );
-
-            exit;
-        }
-
-        handleDatabaseError($koneksi);
-        break;
-
-
-    // ================= DELETE =================
-    case 'DELETE':
-
-        $id = getValidId();
-
-        $stmt = prepareQuery($koneksi,
-            "DELETE FROM buku WHERE id = ?"
-        );
-
-        mysqli_stmt_bind_param($stmt, "i", $id);
-
-        if (mysqli_stmt_execute($stmt)) {
-
-            if (mysqli_stmt_affected_rows($stmt) == 0) {
-                securityError("Buku tidak ditemukan", 404);
-            }
-
-            sendResponse(
-                true,
-                "Data buku berhasil dihapus",
-                ["id" => $id],
-                200
-            );
-
-            exit;
-        }
-
-        handleDatabaseError($koneksi);
-        break;
+        sendResponse(false, "Gagal menyimpan data buku", null, 500);
+        exit;
 
 
     default:
