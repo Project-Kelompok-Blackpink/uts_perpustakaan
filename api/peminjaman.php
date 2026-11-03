@@ -244,4 +244,136 @@ case 'POST':
         sendResponse(false, "Method tidak diizinkan", null, 405);
         exit;
 
+    // ================= PUT =================
+
+    case 'PUT':
+    $input = json_decode(file_get_contents("php://input"), true);
+
+    // Validasi input
+    if (
+        !$input ||
+        !isset($input['id_anggota']) ||
+        !isset($input['id_buku']) ||
+        !isset($input['tanggal_pinjam']) ||
+        !isset($input['tanggal_kembali'])
+    ) {
+        sendResponse(false, "Input tidak boleh kosong", null, 400);
+        break;
+    }
+
+    // Pertahanan pertama: cast integer
+    $id = (int) ($_GET['id'] ?? 0);
+
+    if ($id <= 0) {
+        sendResponse(false, "ID tidak valid", null, 400);
+        break;
+    }
+
+    $id_anggota = (int) $input['id_anggota'];
+    $id_buku = (int) $input['id_buku'];
+    $tanggal_pinjam = $input['tanggal_pinjam'];
+    $tanggal_kembali = $input['tanggal_kembali'];
+
+    // Pertahanan kedua: prepared statement untuk mengecek ID
+    $stmt = mysqli_prepare(
+        $koneksi,
+        "SELECT id FROM peminjaman WHERE id = ?"
+    );
+
+    mysqli_stmt_bind_param($stmt, "i", $id);
+    mysqli_stmt_execute($stmt);
+    $r = mysqli_stmt_get_result($stmt);
+
+    if (!$r) {
+        sendResponse(false, "Terjadi kesalahan pada server", null, 500);
+        break;
+    }
+
+    $data = mysqli_fetch_assoc($r);
+    mysqli_stmt_close($stmt);
+
+    if (!$data) {
+        sendResponse(false, "Data peminjaman tidak ditemukan", null, 404);
+        break;
+    }
+
+    // Query untuk mengubah data peminjaman
+    $stmt = mysqli_prepare(
+        $koneksi,
+        "UPDATE peminjaman
+        SET id_anggota = ?, id_buku = ?, tanggal_pinjam = ?, tanggal_kembali = ?
+        WHERE id = ?"
+    );
+
+    if (!$stmt) {
+        sendResponse(false, "Terjadi kesalahan pada server", null, 500);
+        break;
+    }
+
+    mysqli_stmt_bind_param($stmt, "iissi", $id_anggota, $id_buku, $tanggal_pinjam, $tanggal_kembali, $id);
+
+    if (mysqli_stmt_execute($stmt)) {
+        sendResponse(true, "Data peminjaman berhasil diperbarui", ["id" => $id], 200);
+    } else {
+        sendResponse(false, "Terjadi kesalahan pada server", null, 500);
+    }
+
+    break;
+
+    // ================= DELETE =================
+    case 'DELETE':
+
+    // Mengambil ID
+    $id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
+
+    if (!$id || $id <= 0) {
+        sendResponse(false, "ID tidak valid", null, 400);
+        break;
+    }
+
+    // Cek apakah peminjaman tersedia
+    $stmt = mysqli_prepare($koneksi, "SELECT id FROM peminjaman WHERE id = ?");
+
+    if (!$stmt) {
+        sendResponse(false, "Terjadi kesalahan pada server", null, 500);
+        break;
+    }
+
+    mysqli_stmt_bind_param($stmt, "i", $id);
+    mysqli_stmt_execute($stmt);
+    $r = mysqli_stmt_get_result($stmt);
+
+    if (!$r) {
+        sendResponse(false, "Terjadi kesalahan pada server", null, 500);
+        break;
+    }
+
+    $data = mysqli_fetch_assoc($r);
+
+    if (!$data) {
+        sendResponse(false, "Peminjaman tidak ditemukan", null, 404);
+        break;
+    }
+
+    // Hapus data peminjaman
+    $stmt = mysqli_prepare($koneksi, "DELETE FROM peminjaman WHERE id = ?");
+
+    if (!$stmt) {
+        sendResponse(false, "Terjadi kesalahan pada server", null, 500);
+        break;
+    }
+
+    mysqli_stmt_bind_param($stmt, "i", $id);
+
+    if (mysqli_stmt_execute($stmt)) {
+
+        sendResponse(true, "Data peminjaman berhasil dihapus", ["id" => $id], 200);
+
+    } else {
+
+        sendResponse(false, "Terjadi kesalahan pada server", null, 500);
+    }
+
+    break;
+
 }

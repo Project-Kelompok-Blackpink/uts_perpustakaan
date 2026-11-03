@@ -186,4 +186,129 @@ case 'POST':
     }
 
     break;
+
+    // ================= PUT =================
+    case 'PUT':
+    $input = json_decode(file_get_contents("php://input"), true);
+
+    // Validasi input
+    if (!$input || !isset($input['isbn']) || !isset($input['judul_buku']) ||
+        !isset($input['pengarang']) || !isset($input['tahun_terbit'])) {
+        sendResponse(false, "Input tidak boleh kosong", null, 400);
+        break;
+    }
+
+    // Pertahanan pertama: cast integer
+    $id = (int) ($_GET['id'] ?? 0);
+
+    if ($id <= 0) {
+        sendResponse(false, "ID tidak valid", null, 400);
+        break;
+    }
+
+    $isbn = $input['isbn'];
+    $judul_buku = $input['judul_buku'];
+    $pengarang = $input['pengarang'];
+    $tahun_terbit = $input['tahun_terbit'];
+
+    // Pertahanan kedua: prepared statement untuk mengecek ID
+    $stmt = mysqli_prepare(
+        $koneksi,
+        "SELECT id FROM buku WHERE id = ?"
+    );
+
+    mysqli_stmt_bind_param($stmt, "i", $id);
+    mysqli_stmt_execute($stmt);
+    $r = mysqli_stmt_get_result($stmt);
+
+    if (!$r) {
+        mysqli_stmt_close($stmt);
+        sendResponse(false, "Terjadi kesalahan pada server", null, 500);
+        break;
+    }
+
+    $data = mysqli_fetch_assoc($r);
+
+    if (!$data) {
+        sendResponse(false, "buku tidak ditemukan", null, 404);
+        break;
+    }
+
+    // Query untuk mengubah data buku
+    $stmt = mysqli_prepare(
+        $koneksi,
+        "UPDATE buku
+        SET isbn = ?, judul_buku = ?, pengarang = ?, tahun_terbit = ?
+        WHERE id = ?"
+    );
+
+    if (!$stmt) {
+        sendResponse(false, "Terjadi kesalahan pada server", null, 500);
+        break;
+    }
+
+    mysqli_stmt_bind_param($stmt, "ssssi", $isbn, $judul_buku, $pengarang, $tahun_terbit, $id);
+
+    if (mysqli_stmt_execute($stmt)) {
+        sendResponse(true, "Data buku berhasil diperbarui", ["id" => $id], 200);
+    } else {
+        sendResponse(false, "Terjadi kesalahan pada server", null, 500);
+    }
+
+    break;
+    
+    // ================= DELETE =================
+
+    case 'DELETE':
+
+    // Mengambil ID
+    $id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
+
+    if (!$id || $id <= 0) {
+        sendResponse(false, "ID tidak valid", null, 400);
+        break;
+    }
+
+    // Cek apakah buku tersedia
+    $stmt = mysqli_prepare($koneksi, "SELECT id FROM buku WHERE id = ?");
+
+    if (!$stmt) {
+        sendResponse(false, "Terjadi kesalahan pada server", null, 500);
+        break;
+    }
+
+    mysqli_stmt_bind_param($stmt, "i", $id);
+    mysqli_stmt_execute($stmt);
+    $r = mysqli_stmt_get_result($stmt);
+
+    if (!$r) {
+        sendResponse(false, "Terjadi kesalahan pada server", null, 500);
+        break;
+    }
+
+    $data = mysqli_fetch_assoc($r);
+
+    if (!$data) {
+        sendResponse(false, "Buku tidak ditemukan", null, 404);
+        break;
+    }
+
+    // Hapus data buku
+    $stmt = mysqli_prepare($koneksi, "DELETE FROM buku WHERE id = ?");
+
+    if (!$stmt) {
+        sendResponse(false, "Terjadi kesalahan pada server", null, 500);
+        break;
+    }
+
+    mysqli_stmt_bind_param($stmt, "i", $id);
+
+    if (mysqli_stmt_execute($stmt)) {
+        sendResponse(true, "Data buku berhasil dihapus", ["id" => $id], 200);
+
+    } else {
+        sendResponse(false, "Terjadi kesalahan pada server", null, 500);
+    }
+
+    break;
 }
