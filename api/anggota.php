@@ -166,7 +166,7 @@ switch ($method) {
         );
      break;
 
-     case 'POST':
+case 'POST':
     $input = json_decode(file_get_contents('php://input'), true);
 
     // cek input wajib
