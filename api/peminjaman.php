@@ -136,3 +136,107 @@ switch ($method) {
 
         sendResponse(true, "Berhasil", $data, 200);
         exit;
+
+        case 'POST':
+    $input = json_decode(file_get_contents('php://input'), true);
+
+    // cek input wajib
+    if (!$input || !isset($input['id_anggota']) || !isset($input['id_buku']) || !isset($input['tanggal_pinjam']) || !isset($input['tanggal_kembali'])) {
+        sendResponse(false, "Field id_anggota, id_buku, tanggal_pinjam, tanggal_kembali wajib diisi", null, 400);
+    }
+
+    $id_anggota = (int) $input['id_anggota'];
+    $id_buku = (int) $input['id_buku'];
+    $tanggal_pinjam = $input['tanggal_pinjam'];
+    $tanggal_kembali = $input['tanggal_kembali'];
+
+    // cek data tidak boleh kosong
+    if ($id_anggota <= 0 || $id_buku <= 0) {
+        sendResponse(false, "ID anggota dan ID buku tidak valid", null, 400);
+    }
+
+    // cek format tanggal
+    $validPinjam = is_string($tanggal_pinjam) &&
+        preg_match('/^\d{4}-\d{2}-\d{2}$/', $tanggal_pinjam) &&
+        checkdate((int)substr($tanggal_pinjam, 5, 2), (int)substr($tanggal_pinjam, 8, 2), (int)substr($tanggal_pinjam, 0, 4));
+
+    $validKembali = is_string($tanggal_kembali) &&
+        preg_match('/^\d{4}-\d{2}-\d{2}$/', $tanggal_kembali) &&
+        checkdate((int)substr($tanggal_kembali, 5, 2), (int)substr($tanggal_kembali, 8, 2), (int)substr($tanggal_kembali, 0, 4));
+
+    if (!$validPinjam || !$validKembali || $tanggal_kembali < $tanggal_pinjam) {
+        sendResponse(false, "Format tanggal tidak valid", null, 400);
+    }
+
+    // cek anggota
+    $cek = mysqli_prepare($koneksi, "SELECT id FROM anggota WHERE id = ?");
+
+    if (!$cek) {
+        error_log(mysqli_error($koneksi));
+        sendResponse(false, "Terjadi kesalahan server", null, 500);
+    }
+
+    mysqli_stmt_bind_param($cek, "i", $id_anggota);
+    mysqli_stmt_execute($cek);
+    $hasil = mysqli_stmt_get_result($cek);
+
+    if (mysqli_num_rows($hasil) == 0) {
+        sendResponse(false, "Anggota tidak ditemukan", null, 404);
+    }
+
+    // cek buku
+    $cek = mysqli_prepare($koneksi, "SELECT id FROM buku WHERE id = ?");
+
+    if (!$cek) {
+        error_log(mysqli_error($koneksi));
+        sendResponse(false, "Terjadi kesalahan server", null, 500);
+    }
+
+    mysqli_stmt_bind_param($cek, "i", $id_buku);
+    mysqli_stmt_execute($cek);
+    $hasil = mysqli_stmt_get_result($cek);
+
+    if (mysqli_num_rows($hasil) == 0) {
+        sendResponse(false, "Buku tidak ditemukan", null, 404);
+    }
+
+    // cek peminjaman yang sama
+    $cek = mysqli_prepare($koneksi, "SELECT id FROM peminjaman WHERE id_anggota = ? AND id_buku = ? AND tanggal_pinjam = ?");
+
+    if (!$cek) {
+        error_log(mysqli_error($koneksi));
+        sendResponse(false, "Terjadi kesalahan server", null, 500);
+    }
+
+    mysqli_stmt_bind_param($cek, "iis", $id_anggota, $id_buku, $tanggal_pinjam);
+    mysqli_stmt_execute($cek);
+    $hasil = mysqli_stmt_get_result($cek);
+
+    if (mysqli_num_rows($hasil) > 0) {
+        sendResponse(false, "Data peminjaman sudah terdaftar", null, 409);
+    }
+
+    // insert data peminjaman
+    $stmt = mysqli_prepare($koneksi, "INSERT INTO peminjaman (id_anggota, id_buku, tanggal_pinjam, tanggal_kembali) VALUES (?, ?, ?, ?)");
+
+    if (!$stmt) {
+        error_log(mysqli_error($koneksi));
+        sendResponse(false, "Terjadi kesalahan server", null, 500);
+    }
+
+    mysqli_stmt_bind_param($stmt, "iiss", $id_anggota, $id_buku, $tanggal_pinjam, $tanggal_kembali);
+
+    if (mysqli_stmt_execute($stmt)) {
+        sendResponse(
+            true,
+            "Data peminjaman berhasil tersimpan",
+            ["id" => mysqli_insert_id($koneksi)],
+            201
+        );
+    } else {
+        error_log(mysqli_stmt_error($stmt));
+        sendResponse(false, "Data peminjaman gagal disimpan", null, 500);
+    }
+
+    break;
+}

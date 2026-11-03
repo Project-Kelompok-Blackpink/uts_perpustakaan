@@ -130,4 +130,60 @@ switch ($method) {
         sendResponse(true, "Berhasil", $data, 200);
         exit;
 
-        
+        case 'POST':
+    $input = json_decode(file_get_contents('php://input'), true);
+
+    // cek input wajib
+    if (!$input || !isset($input['isbn']) || !isset($input['judul_buku']) || !isset($input['pengarang']) || !isset($input['tahun_terbit'])) {
+        sendResponse(false, "Field isbn, judul_buku, pengarang, tahun_terbit wajib diisi", null, 400);
+    }
+
+    $isbn = trim($input['isbn']);
+    $judul_buku = trim($input['judul_buku']);
+    $pengarang = trim($input['pengarang']);
+    $tahun_terbit = (int) $input['tahun_terbit'];
+
+    if ($isbn == '' || $judul_buku == '' || $pengarang == '' || $tahun_terbit <= 0) {
+        sendResponse(false, "Data buku tidak boleh kosong atau tidak valid", null, 400);
+    }
+
+    // cek ISBN apakah sudah ada
+    $cek = mysqli_prepare($koneksi, "SELECT id FROM buku WHERE isbn = ?");
+
+    if (!$cek) {
+        error_log(mysqli_error($koneksi));
+        sendResponse(false, "Terjadi kesalahan server", null, 500);
+    }
+
+    mysqli_stmt_bind_param($cek, "s", $isbn);
+    mysqli_stmt_execute($cek);
+    $hasil = mysqli_stmt_get_result($cek);
+
+    if (mysqli_num_rows($hasil) > 0) {
+        sendResponse(false, "ISBN buku sudah terdaftar", null, 409);
+    }
+
+    // insert data buku
+    $stmt = mysqli_prepare($koneksi, "INSERT INTO buku (isbn, judul_buku, pengarang, tahun_terbit) VALUES (?, ?, ?, ?)");
+
+    if (!$stmt) {
+        error_log(mysqli_error($koneksi));
+        sendResponse(false, "Terjadi kesalahan server", null, 500);
+    }
+
+    mysqli_stmt_bind_param($stmt, "sssi", $isbn, $judul_buku, $pengarang, $tahun_terbit);
+
+    if (mysqli_stmt_execute($stmt)) {
+        sendResponse(
+            true,
+            "Data buku berhasil tersimpan",
+            ["id" => mysqli_insert_id($koneksi)],
+            201
+        );
+    } else {
+        error_log(mysqli_stmt_error($stmt));
+        sendResponse(false, "Data buku gagal disimpan", null, 500);
+    }
+
+    break;
+}
