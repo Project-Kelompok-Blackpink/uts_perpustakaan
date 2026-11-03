@@ -102,7 +102,7 @@ switch ($method) {
             }
 
             $offset = ($page - 1) * $limit;
-            $stmt = mysqli_prepare($koneksi,"SELECT id, kode_anggota, nama_anggota, alamat, no_hp FROM anggota ORDER BY id DESC LIMIT ? OFFSET ?");
+            $stmt = mysqli_prepare($koneksi, "SELECT id, kode_anggota, nama_anggota, alamat, no_hp FROM anggota ORDER BY id DESC LIMIT ? OFFSET ?");
 
             if (!$stmt) {
                 gagalQuery($koneksi);
@@ -130,7 +130,7 @@ switch ($method) {
         }
 
         // GET SEMUA DATA
-        $stmt = mysqli_prepare($koneksi,"SELECT id, kode_anggota, nama_anggota, alamat, no_hp FROM anggota ORDER BY id DESC");
+        $stmt = mysqli_prepare($koneksi, "SELECT id, kode_anggota, nama_anggota, alamat, no_hp FROM anggota ORDER BY id DESC");
 
         if (!$stmt) {
             gagalQuery($koneksi);
@@ -222,4 +222,130 @@ case 'POST':
     }
 
     break;
+
+    // ================= PUT =================
+    case 'PUT':
+    $input = json_decode(file_get_contents("php://input"), true);
+
+    // Validasi input
+    if (
+        !$input || !isset($input['kode_anggota']) || !isset($input['nama_anggota']) ) {
+        sendResponse(false, "Input tidak boleh kosong", null, 400);
+        break;
+    }
+
+    // Pertahanan pertama: cast integer
+    $id = (int) ($_GET['id'] ?? 0);
+
+    if ($id <= 0) {
+        sendResponse(false, "ID tidak valid", null, 400);
+        break;
+    }
+
+    $kode_anggota = $input['kode_anggota'];
+    $nama_anggota = $input['nama_anggota'];
+    $alamat = $input['alamat'] ?? null;
+    $no_hp = $input['no_hp'] ?? null;
+
+    // Pertahanan kedua: prepared statement untuk mengecek ID
+    $stmt = mysqli_prepare(
+        $koneksi,
+        "SELECT id FROM anggota WHERE id = ?"
+    );
+
+    mysqli_stmt_bind_param($stmt, "i", $id);
+    mysqli_stmt_execute($stmt);
+    $r = mysqli_stmt_get_result($stmt);
+
+    if (!$r) {
+        mysqli_stmt_close($stmt);
+        sendResponse(false, "Terjadi kesalahan pada server", null, 500);
+        break;
+    }
+
+    $data = mysqli_fetch_assoc($r);
+
+    if (!$data) {
+        sendResponse(false, "Anggota tidak ditemukan", null, 404);
+        break;
+    }
+
+    // Query untuk mengubah data anggota
+    $stmt = mysqli_prepare(
+        $koneksi,
+        "UPDATE anggota
+        SET kode_anggota = ?, nama_anggota = ?, alamat = ?, no_hp = ?
+        WHERE id = ?"
+    );
+
+    if (!$stmt) {
+        sendResponse(false, "Terjadi kesalahan pada server", null, 500);
+        break;
+    }
+
+    mysqli_stmt_bind_param($stmt, "ssssi", $kode_anggota, $nama_anggota, $alamat, $no_hp, $id);
+
+    if (mysqli_stmt_execute($stmt)) {
+        sendResponse(true, "Data anggota berhasil diperbarui", ["id" => $id], 200);
+    } else {
+        sendResponse(false, "Terjadi kesalahan pada server", null, 500);
+    }
+
+    break;
+
+    // ================= DELETE =================
+
+    case 'DELETE':
+
+        // Mengambil ID
+        $id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
+
+        if (!$id || $id <= 0) {
+            sendResponse(false, "ID tidak valid", null, 400);
+            break;
+        }
+
+        // Cek apakah anggota tersedia
+        $stmt = mysqli_prepare($koneksi, "SELECT id FROM anggota WHERE id = ?");
+
+        if (!$stmt) {
+            sendResponse(false, "Terjadi kesalahan pada server", null, 500);
+            break;
+        }
+
+        mysqli_stmt_bind_param($stmt, "i", $id);
+        mysqli_stmt_execute($stmt);
+        $r = mysqli_stmt_get_result($stmt);
+
+        if (!$r) {
+            sendResponse(false, "Terjadi kesalahan pada server", null, 500);
+            break;
+        }
+
+        $data = mysqli_fetch_assoc($r);
+
+        if (!$data) {
+            sendResponse(false, "Anggota tidak ditemukan", null, 404);
+            break;
+        }
+
+        // Hapus data anggota
+        $stmt = mysqli_prepare($koneksi, "DELETE FROM anggota WHERE id = ?");
+
+        if (!$stmt) {
+            sendResponse(false, "Terjadi kesalahan pada server", null, 500);
+            break;
+        }
+
+        mysqli_stmt_bind_param($stmt, "i", $id);
+
+        if (mysqli_stmt_execute($stmt)) {
+
+            sendResponse(true, "Data anggota berhasil dihapus", ["id" => $id], 200);
+        } else {
+
+            sendResponse(false, "Terjadi kesalahan pada server", null, 500);
+        }
+
+        break;
 }
