@@ -69,3 +69,17 @@ erDiagram
 | POST | `peminjaman.php` | Data peminjaman | Data berhasil ditambahkan |
 | PUT | `peminjaman.php?id=1` | Data peminjaman yang diperbarui | Data berhasil diubah |
 | DELETE | `peminjaman.php?id=1` | Tidak ada | Data berhasil dihapus |
+
+#### Cara Menjalankan Api menggunakan Laragon dan Thunder Client
+1. Cara Menjalankan API Menggunakan Laragon dan Thunder Client
+2. Buka aplikasi Laragon.
+3. Klik Start All untuk menjalankan Apache dan MySQL.
+4. Buka Visual Studio Code.
+5. Buka folder project uts_perpustakaan.
+6. Buka ekstensi Thunder Client.
+7. Klik New Request.
+8. Pilih method GET, POST, PUT, atau DELETE.
+9. Masukkan URL endpoint API. 
+Contoh : http://localhost/uts_perpustakaan/uts_perpustakaan/anggota.php
+10. Jika menggunakan POST atau PUT, masukkan data pada bagian Body → JSON.
+11. Klik Send untuk menjalankan dan melihat hasil response API.
