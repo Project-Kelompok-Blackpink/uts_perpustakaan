@@ -38,3 +38,62 @@ erDiagram
         date tanggal_kembali
     }
 ```
+### Daftar Endpoint API
+
+Berikut adalah daftar endpoint API yang tersedia pada aplikasi Sistem Informasi Perpustakaan.
+
+A. Endpoint Anggota
+
+Method	URL	Body	Response
+GET	http://localhost/uts_perpustakaan/uts_perpustakaan/api/anggota.php	Tidak ada	Menampilkan seluruh data anggota
+GET	http://localhost/uts_perpustakaan/uts_perpustakaan/api/anggota.php?id=1	Tidak ada	Menampilkan anggota berdasarkan ID
+POST	http://localhost/uts_perpustakaan/uts_perpustakaan/api/anggota.php	Data kode anggota, nama, alamat, dan no_hp	Data anggota berhasil ditambahkan
+PUT	http://localhost/uts_perpustakaan/uts_perpustakaan/api/anggota.php?id=1	Data anggota yang diperbarui	Data anggota berhasil diubah
+DELETE	http://localhost/uts_perpustakaan/uts_perpustakaan/api/anggota.php?id=1	Tidak ada	Data anggota berhasil dihapus
+
+B. Endpoint Buku
+
+Method	URL	Body	Response
+GET	http://localhost/uts_perpustakaan/uts_perpustakaan/api/buku.php	Tidak ada	Menampilkan seluruh data buku
+GET	http://localhost/uts_perpustakaan/uts_perpustakaan/api/buku.php?id=1	Tidak ada	Menampilkan buku berdasarkan ID
+POST	http://localhost/uts_perpustakaan/uts_perpustakaan/api/buku.php	Data ISBN, judul buku, pengarang, dan tahun terbit	Data buku berhasil ditambahkan
+PUT	http://localhost/uts_perpustakaan/uts_perpustakaan/api/buku.php?id=1	Data buku yang diperbarui	Data buku berhasil diubah
+DELETE	http://localhost/uts_perpustakaan/uts_perpustakaan/api/buku.php?id=1	Tidak ada	Data buku berhasil dihapus
+
+C. Endpoint Peminjaman
+
+Method	URL	Body	Response
+GET	http://localhost/uts_perpustakaan/uts_perpustakaan/api/peminjaman.php	Tidak ada	Menampilkan seluruh data peminjaman
+GET	http://localhost/uts_perpustakaan/uts_perpustakaan/api/peminjaman.php?id=1	Tidak ada	Menampilkan peminjaman berdasarkan ID
+POST	http://localhost/uts_perpustakaan/uts_perpustakaan/api/peminjaman.php	Data id_anggota, id_buku, tanggal_pinjam, dan tanggal_kembali	Data peminjaman berhasil ditambahkan
+PUT	http://localhost/uts_perpustakaan/uts_perpustakaan/api/peminjaman.php?id=1	Data peminjaman yang diperbarui	Data peminjaman berhasil diubah
+DELETE	http://localhost/uts_perpustakaan/uts_perpustakaan/api/peminjaman.php?id=1	Tidak ada	Data peminjaman berhasil dihapus
+
+Contoh Body JSON
+
+Anggota
+
+{
+  "kode_anggota": "AG006",
+  "nama_anggota": "Chelsea",
+  "alamat": "Pangkalpinang",
+  "no_hp": "081234567890"
+}
+
+Buku
+
+{
+  "isbn": "9786020000000",
+  "judul_buku": "Belajar Pemrograman",
+  "pengarang": "Andi",
+  "tahun_terbit": "2026"
+}
+
+Peminjaman
+
+{
+  "id_anggota": 1,
+  "id_buku": 1,
+  "tanggal_pinjam": "2026-11-01",
+  "tanggal_kembali": "2026-11-08"
+}
