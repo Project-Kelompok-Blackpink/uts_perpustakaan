@@ -7,5 +7,34 @@ Anggota Kelompok :
 4. Chelsea Clarisa (2511500065) : Endpoint C (PUT/DELETE)
 
 
-## ERD (Entity Relationship Diagram)
-![alt text](<erd.jpeg>)
+## Entity Relationship Diagram (ERD)
+
+```mermaid
+erDiagram
+    ANGGOTA ||--o{ PEMINJAMAN : melakukan
+    BUKU ||--o{ PEMINJAMAN : dipinjam
+
+    ANGGOTA {
+        int id PK
+        varchar kode_anggota
+        varchar nama_anggota
+        varchar alamat
+        varchar no_hp
+    }
+
+    BUKU {
+        int id PK
+        varchar isbn
+        varchar judul_buku
+        varchar pengarang
+        varchar tahun_terbit
+    }
+
+    PEMINJAMAN {
+        int id PK
+        int id_anggota FK
+        int id_buku FK
+        date tanggal_pinjam
+        date tanggal_kembali
+    }
+```
