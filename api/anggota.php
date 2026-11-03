@@ -102,7 +102,7 @@ switch ($method) {
             }
 
             $offset = ($page - 1) * $limit;
-            $stmt = mysqli_prepare($koneksi,"SELECT id, kode_anggota, nama_anggota, alamat, no_hp FROM anggota ORDER BY id DESC LIMIT ? OFFSET ?");
+            $stmt = mysqli_prepare($koneksi, "SELECT id, kode_anggota, nama_anggota, alamat, no_hp FROM anggota ORDER BY id DESC LIMIT ? OFFSET ?");
 
             if (!$stmt) {
                 gagalQuery($koneksi);
@@ -130,7 +130,7 @@ switch ($method) {
         }
 
         // GET SEMUA DATA
-        $stmt = mysqli_prepare($koneksi,"SELECT id, kode_anggota, nama_anggota, alamat, no_hp FROM anggota ORDER BY id DESC");
+        $stmt = mysqli_prepare($koneksi, "SELECT id, kode_anggota, nama_anggota, alamat, no_hp FROM anggota ORDER BY id DESC");
 
         if (!$stmt) {
             gagalQuery($koneksi);
@@ -164,5 +164,5 @@ switch ($method) {
             null,
             405
         );
-     break;
+        break;
 }

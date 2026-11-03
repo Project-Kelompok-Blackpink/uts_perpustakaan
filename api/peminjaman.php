@@ -255,4 +255,5 @@ switch ($method) {
 
         sendResponse(false, "Method tidak diizinkan", null, 405);
         exit;
+
 }
