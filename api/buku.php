@@ -130,7 +130,7 @@ switch ($method) {
         sendResponse(true, "Berhasil", $data, 200);
         exit;
 
-        case 'POST':
+case 'POST':
     $input = json_decode(file_get_contents('php://input'), true);
 
     // cek input wajib
