@@ -8,6 +8,7 @@ Anggota Kelompok :
 
 ## Entity Relationship Diagram (ERD)
 
+
 ```mermaid
 erDiagram
     ANGGOTA {
