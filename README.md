@@ -40,38 +40,36 @@ erDiagram
 ```
 ### Daftar Endpoint API
 
-Berikut adalah daftar endpoint API yang tersedia pada aplikasi Sistem Informasi Perpustakaan.
-
 A. Endpoint Anggota
 
 Method	URL	Body	Response
-GET	http://localhost/uts_perpustakaan/uts_perpustakaan/api/anggota.php	Tidak ada	Menampilkan seluruh data anggota
-GET	http://localhost/uts_perpustakaan/uts_perpustakaan/api/anggota.php?id=1	Tidak ada	Menampilkan anggota berdasarkan ID
-POST	http://localhost/uts_perpustakaan/uts_perpustakaan/api/anggota.php	Data kode anggota, nama, alamat, dan no_hp	Data anggota berhasil ditambahkan
-PUT	http://localhost/uts_perpustakaan/uts_perpustakaan/api/anggota.php?id=1	Data anggota yang diperbarui	Data anggota berhasil diubah
-DELETE	http://localhost/uts_perpustakaan/uts_perpustakaan/api/anggota.php?id=1	Tidak ada	Data anggota berhasil dihapus
+GET	api/anggota.php	Tidak ada	Menampilkan seluruh data anggota
+GET	api/anggota.php?id=1	Tidak ada	Menampilkan anggota berdasarkan ID
+POST	api/anggota.php	Data kode anggota, nama, alamat, dan no_hp	Data anggota berhasil ditambahkan
+PUT	api/anggota.php?id=1	Data anggota yang diperbarui	Data anggota berhasil diubah
+DELETE	api/anggota.php?id=1	Tidak ada	Data anggota berhasil dihapus
 
 B. Endpoint Buku
 
 Method	URL	Body	Response
-GET	http://localhost/uts_perpustakaan/uts_perpustakaan/api/buku.php	Tidak ada	Menampilkan seluruh data buku
-GET	http://localhost/uts_perpustakaan/uts_perpustakaan/api/buku.php?id=1	Tidak ada	Menampilkan buku berdasarkan ID
-POST	http://localhost/uts_perpustakaan/uts_perpustakaan/api/buku.php	Data ISBN, judul buku, pengarang, dan tahun terbit	Data buku berhasil ditambahkan
-PUT	http://localhost/uts_perpustakaan/uts_perpustakaan/api/buku.php?id=1	Data buku yang diperbarui	Data buku berhasil diubah
-DELETE	http://localhost/uts_perpustakaan/uts_perpustakaan/api/buku.php?id=1	Tidak ada	Data buku berhasil dihapus
+GET	api/buku.php	Tidak ada	Menampilkan seluruh data buku
+GET	api/buku.php?id=1	Tidak ada	Menampilkan buku berdasarkan ID
+POST	api/buku.php	Data ISBN, judul buku, pengarang, dan tahun terbit	Data buku berhasil ditambahkan
+PUT	api/buku.php?id=1	Data buku yang diperbarui	Data buku berhasil diubah
+DELETE	api/buku.php?id=1	Tidak ada	Data buku berhasil dihapus
 
 C. Endpoint Peminjaman
 
 Method	URL	Body	Response
-GET	http://localhost/uts_perpustakaan/uts_perpustakaan/api/peminjaman.php	Tidak ada	Menampilkan seluruh data peminjaman
-GET	http://localhost/uts_perpustakaan/uts_perpustakaan/api/peminjaman.php?id=1	Tidak ada	Menampilkan peminjaman berdasarkan ID
-POST	http://localhost/uts_perpustakaan/uts_perpustakaan/api/peminjaman.php	Data id_anggota, id_buku, tanggal_pinjam, dan tanggal_kembali	Data peminjaman berhasil ditambahkan
-PUT	http://localhost/uts_perpustakaan/uts_perpustakaan/api/peminjaman.php?id=1	Data peminjaman yang diperbarui	Data peminjaman berhasil diubah
-DELETE	http://localhost/uts_perpustakaan/uts_perpustakaan/api/peminjaman.php?id=1	Tidak ada	Data peminjaman berhasil dihapus
+GET	api/peminjaman.php	Tidak ada	Menampilkan seluruh data peminjaman
+GET	api/peminjaman.php?id=1	Tidak ada	Menampilkan peminjaman berdasarkan ID
+POST	api/peminjaman.php	Data id_anggota, id_buku, tanggal_pinjam, dan tanggal_kembali	Data peminjaman berhasil ditambahkan
+PUT	api/peminjaman.php?id=1	Data peminjaman yang diperbarui	Data peminjaman berhasil diubah
+DELETE	api/peminjaman.php?id=1	Tidak ada	Data peminjaman berhasil dihapus
 
 Contoh Body JSON
 
-Anggota
+1. Anggota
 
 {
   "kode_anggota": "AG006",
@@ -80,7 +78,7 @@ Anggota
   "no_hp": "081234567890"
 }
 
-Buku
+2. Buku
 
 {
   "isbn": "9786020000000",
@@ -89,7 +87,7 @@ Buku
   "tahun_terbit": "2026"
 }
 
-Peminjaman
+3. Peminjaman
 
 {
   "id_anggota": 1,
