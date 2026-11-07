@@ -1,0 +1,123 @@
+{
+    "clientName": "Thunder Client",
+    "collectionName": "METHOD_GET",
+    "collectionId": "0df57254-1a5a-48d5-bbe2-e04aa2c55d34",
+    "dateExported": "2026-11-07T06:47:24.547Z",
+    "version": "1.4",
+    "folders": [],
+    "requests": [
+        {
+            "_id": "b597c440-ac59-422e-bae2-7747c91b4e5d",
+            "colId": "0df57254-1a5a-48d5-bbe2-e04aa2c55d34",
+            "containerId": "",
+            "name": "http://localhost/uts_perpustakaan/uts_perpustakaan/api/anggota.php?page=1&limit=5",
+            "url": "http://localhost/uts_perpustakaan/uts_perpustakaan/api/anggota.php?page=1&limit=5",
+            "method": "GET",
+            "sortNum": 10000,
+            "created": "2026-11-07T06:45:55.417Z",
+            "modified": "2026-11-07T06:45:55.417Z",
+            "headers": [],
+            "params": [
+                {
+                    "name": "page",
+                    "value": "1",
+                    "isPath": false
+                },
+                {
+                    "name": "limit",
+                    "value": "5",
+                    "isPath": false
+                }
+            ]
+        },
+        {
+            "_id": "eb06be56-34dc-4ec6-972d-36551fab7282",
+            "colId": "0df57254-1a5a-48d5-bbe2-e04aa2c55d34",
+            "containerId": "",
+            "name": "http://localhost/uts_perpustakaan/uts_perpustakaan/api/anggota.php?search=andi",
+            "url": "http://localhost/uts_perpustakaan/uts_perpustakaan/api/anggota.php?search=andi",
+            "method": "GET",
+            "sortNum": 20000,
+            "created": "2026-11-07T06:46:04.830Z",
+            "modified": "2026-11-07T06:46:04.830Z",
+            "headers": [],
+            "params": [
+                {
+                    "name": "search",
+                    "value": "andi",
+                    "isPath": false
+                }
+            ]
+        },
+        {
+            "_id": "e7b041af-5a83-4542-8846-6056996e4ff2",
+            "colId": "0df57254-1a5a-48d5-bbe2-e04aa2c55d34",
+            "containerId": "",
+            "name": "http://localhost/uts_perpustakaan/uts_perpustakaan/api/anggota.php?id=9999",
+            "url": "http://localhost/uts_perpustakaan/uts_perpustakaan/api/anggota.php?id=9999",
+            "method": "GET",
+            "sortNum": 30000,
+            "created": "2026-11-07T06:46:10.531Z",
+            "modified": "2026-11-07T06:46:10.531Z",
+            "headers": [],
+            "params": [
+                {
+                    "name": "id",
+                    "value": "9999",
+                    "isPath": false
+                }
+            ]
+        },
+        {
+            "_id": "a6e85b03-eb4f-4e35-bad4-7e3a56622f25",
+            "colId": "0df57254-1a5a-48d5-bbe2-e04aa2c55d34",
+            "containerId": "",
+            "name": "http://localhost/uts_perpustakaan/uts_perpustakaan/api/anggota.php?id=1",
+            "url": "http://localhost/uts_perpustakaan/uts_perpustakaan/api/anggota.php?id=1",
+            "method": "GET",
+            "sortNum": 40000,
+            "created": "2026-11-07T06:46:17.006Z",
+            "modified": "2026-11-07T06:46:17.006Z",
+            "headers": [],
+            "params": [
+                {
+                    "name": "id",
+                    "value": "1",
+                    "isPath": false
+                }
+            ]
+        },
+        {
+            "_id": "1217608b-b738-4fea-b393-3795f78a16ed",
+            "colId": "0df57254-1a5a-48d5-bbe2-e04aa2c55d34",
+            "containerId": "",
+            "name": "http://localhost/uts_perpustakaan/uts_perpustakaan/api/anggota.php?id=1",
+            "url": "http://localhost/uts_perpustakaan/uts_perpustakaan/api/anggota.php?id=1",
+            "method": "GET",
+            "sortNum": 50000,
+            "created": "2026-11-07T06:46:22.551Z",
+            "modified": "2026-11-07T06:46:22.551Z",
+            "headers": [],
+            "params": [
+                {
+                    "name": "id",
+                    "value": "1",
+                    "isPath": false
+                }
+            ]
+        },
+        {
+            "_id": "c44bc0e4-e114-4985-967f-1dbed978290c",
+            "colId": "0df57254-1a5a-48d5-bbe2-e04aa2c55d34",
+            "containerId": "",
+            "name": "http://localhost/uts_perpustakaan/uts_perpustakaan/api/anggota.php",
+            "url": "http://localhost/uts_perpustakaan/uts_perpustakaan/api/anggota.php",
+            "method": "GET",
+            "sortNum": 60000,
+            "created": "2026-11-07T06:46:28.160Z",
+            "modified": "2026-11-07T06:46:28.160Z",
+            "headers": []
+        }
+    ],
+    "ref": "2MR9y91XLGT7dQWujOSIJKZh1JT9qvqntn1wwzKzfoud-lTtI1PuA51iJmI2zRCfthYnVEVS3XVNb4O9SAK96w"
+}

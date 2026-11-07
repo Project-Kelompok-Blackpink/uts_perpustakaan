@@ -1,0 +1,83 @@
+{
+    "clientName": "Thunder Client",
+    "collectionName": "METHODE_POST",
+    "collectionId": "108dd26d-908e-4689-9e88-2963d7208c58",
+    "dateExported": "2026-11-07T07:12:56.107Z",
+    "version": "1.4",
+    "folders": [],
+    "requests": [
+        {
+            "_id": "c0e97787-78ba-4af4-8a62-fbc98899d618",
+            "colId": "108dd26d-908e-4689-9e88-2963d7208c58",
+            "containerId": "",
+            "name": "http://localhost/uts_perpustakaan/uts_perpustakaan/api/anggota.php",
+            "url": "http://localhost/uts_perpustakaan/uts_perpustakaan/api/anggota.php",
+            "method": "POST",
+            "sortNum": 30000,
+            "created": "2026-11-07T07:06:27.302Z",
+            "modified": "2026-11-07T07:06:27.302Z",
+            "headers": [],
+            "body": {
+                "type": "json",
+                "raw": [
+                    "{",
+                    "  \"kode_anggota\": \"\",",
+                    "  \"nama_anggota\": \"\",",
+                    "  \"alamat\": \"\",",
+                    "  \"no_hp\": \"\"",
+                    "}"
+                ],
+                "form": []
+            }
+        },
+        {
+            "_id": "5f0c8890-814d-4df3-8d48-73ef658d6c53",
+            "colId": "108dd26d-908e-4689-9e88-2963d7208c58",
+            "containerId": "",
+            "name": "http://localhost/uts_perpustakaan/uts_perpustakaan/api/anggota.php",
+            "url": "http://localhost/uts_perpustakaan/uts_perpustakaan/api/anggota.php",
+            "method": "POST",
+            "sortNum": 40000,
+            "created": "2026-11-07T07:07:59.927Z",
+            "modified": "2026-11-07T07:07:59.927Z",
+            "headers": [],
+            "body": {
+                "type": "json",
+                "raw": [
+                    "{",
+                    "  \"kode_anggota\": \"AG001\",",
+                    "  \"nama_anggota\": \"Budi Baru\",",
+                    "  \"alamat\": \"Belinyu\",",
+                    "  \"no_hp\": \"089732564723\"",
+                    "}"
+                ],
+                "form": []
+            }
+        },
+        {
+            "_id": "739dcefa-5dc1-4d1c-9f93-e4d5a883a71c",
+            "colId": "108dd26d-908e-4689-9e88-2963d7208c58",
+            "containerId": "",
+            "name": "http://localhost/uts_perpustakaan/uts_perpustakaan/api/anggota.php",
+            "url": "http://localhost/uts_perpustakaan/uts_perpustakaan/api/anggota.php",
+            "method": "POST",
+            "sortNum": 50000,
+            "created": "2026-11-07T07:10:05.809Z",
+            "modified": "2026-11-07T07:10:05.809Z",
+            "headers": [],
+            "body": {
+                "type": "json",
+                "raw": [
+                    "{",
+                    "  \"kode_anggota\": \"AG008\",",
+                    "  \"nama_anggota\": \"Budi\",",
+                    "  \"alamat\": \"Belinyu\",",
+                    "  \"no_hp\": \"0897325647\"",
+                    "}"
+                ],
+                "form": []
+            }
+        }
+    ],
+    "ref": "1gmkaY33KRfkqlWffkIMGdZjqJ_6sXJFl88GInwil1Tk0R47ALzLbzAzz7ozncGPmXUAgwVYYsyvowcSGrf8wQ"
+}

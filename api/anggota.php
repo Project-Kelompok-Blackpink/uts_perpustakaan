@@ -247,6 +247,11 @@ case 'POST':
     $alamat = $input['alamat'] ?? null;
     $no_hp = $input['no_hp'] ?? null;
 
+    if ($kode_anggota == '' || $nama_anggota == '' || $alamat == '' || $no_hp == '') {
+        sendResponse(false, "Data anggota tidak boleh kosong", null, 400);
+    }
+
+
     // Pertahanan kedua: prepared statement untuk mengecek ID
     $stmt = mysqli_prepare(
         $koneksi,
@@ -258,7 +263,6 @@ case 'POST':
     $r = mysqli_stmt_get_result($stmt);
 
     if (!$r) {
-        mysqli_stmt_close($stmt);
         sendResponse(false, "Terjadi kesalahan pada server", null, 500);
         break;
     }

@@ -1,0 +1,68 @@
+{
+    "clientName": "Thunder Client",
+    "collectionName": "METHOD_DELETE",
+    "collectionId": "9ac77352-3120-4d71-a141-6af3377c3162",
+    "dateExported": "2026-11-07T07:38:04.161Z",
+    "version": "1.4",
+    "folders": [],
+    "requests": [
+        {
+            "_id": "507f4d1e-a8d4-4d28-a7ad-7fc0315287e0",
+            "colId": "9ac77352-3120-4d71-a141-6af3377c3162",
+            "containerId": "",
+            "name": "http://localhost/uts_perpustakaan/uts_perpustakaan/api/anggota.php?id=8",
+            "url": "http://localhost/uts_perpustakaan/uts_perpustakaan/api/anggota.php?id=8",
+            "method": "DELETE",
+            "sortNum": 10000,
+            "created": "2026-11-07T07:36:35.632Z",
+            "modified": "2026-11-07T07:36:35.632Z",
+            "headers": [],
+            "params": [
+                {
+                    "name": "id",
+                    "value": "8",
+                    "isPath": false
+                }
+            ]
+        },
+        {
+            "_id": "090431b3-c2a4-42f2-b554-dccc04a71913",
+            "colId": "9ac77352-3120-4d71-a141-6af3377c3162",
+            "containerId": "",
+            "name": "http://localhost/uts_perpustakaan/uts_perpustakaan/api/anggota.php?id=8",
+            "url": "http://localhost/uts_perpustakaan/uts_perpustakaan/api/anggota.php?id=888",
+            "method": "DELETE",
+            "sortNum": 20000,
+            "created": "2026-11-07T07:37:18.149Z",
+            "modified": "2026-11-07T07:37:18.149Z",
+            "headers": [],
+            "params": [
+                {
+                    "name": "id",
+                    "value": "888",
+                    "isPath": false
+                }
+            ]
+        },
+        {
+            "_id": "934df8d4-df36-44ea-b7a3-36baabec370e",
+            "colId": "9ac77352-3120-4d71-a141-6af3377c3162",
+            "containerId": "",
+            "name": "http://localhost/uts_perpustakaan/uts_perpustakaan/api/anggota.php?id=8",
+            "url": "http://localhost/uts_perpustakaan/uts_perpustakaan/api/anggota.php?id=abc",
+            "method": "DELETE",
+            "sortNum": 30000,
+            "created": "2026-11-07T07:37:54.646Z",
+            "modified": "2026-11-07T07:37:54.646Z",
+            "headers": [],
+            "params": [
+                {
+                    "name": "id",
+                    "value": "abc",
+                    "isPath": false
+                }
+            ]
+        }
+    ],
+    "ref": "iiFbM4o4j55k6obGEvsqEQ9lt6lCp5WNYIB0bvOaA1mX5BkoRfUJc4qGDJNN1yOQolBUjor5VTayuMH6PjYr0Q"
+}
