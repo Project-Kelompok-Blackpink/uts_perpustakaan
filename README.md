@@ -1,4 +1,4 @@
-# uts_perpustkaan  
+# uts_perpustakaan  
 Nama Tema: Sistem Informasi Perpustakaan
 Kelompok Blackpink
 Anggota Kelompok :
