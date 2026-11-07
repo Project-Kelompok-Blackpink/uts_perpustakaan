@@ -1,0 +1,104 @@
+{
+    "clientName": "Thunder Client",
+    "collectionName": "METHOD_PUT",
+    "collectionId": "2a37f2f4-f812-46aa-aa4c-299a41cada1c",
+    "dateExported": "2026-11-07T07:28:33.885Z",
+    "version": "1.4",
+    "folders": [],
+    "requests": [
+        {
+            "_id": "0afda2b4-7bc2-46e2-8ce8-d4f5e3b1c11d",
+            "colId": "2a37f2f4-f812-46aa-aa4c-299a41cada1c",
+            "containerId": "",
+            "name": "http://localhost/uts_perpustakaan/uts_perpustakaan/api/anggota.php?id=1",
+            "url": "http://localhost/uts_perpustakaan/uts_perpustakaan/api/anggota.php?id=1",
+            "method": "PUT",
+            "sortNum": 20000,
+            "created": "2026-11-07T07:19:47.184Z",
+            "modified": "2026-11-07T07:19:47.184Z",
+            "headers": [],
+            "params": [
+                {
+                    "name": "id",
+                    "value": "1",
+                    "isPath": false
+                }
+            ],
+            "body": {
+                "type": "json",
+                "raw": [
+                    "{",
+                    "  \"kode_anggota\":\"AG001\",",
+                    "  \"nama_anggota\":\"Delvin\",",
+                    "  \"alamat\":\"Jakarta\",",
+                    "  \"no_hp\":\"081234567890\"",
+                    "}"
+                ],
+                "form": []
+            }
+        },
+        {
+            "_id": "8be92a41-6071-4f85-b106-761d632f404f",
+            "colId": "2a37f2f4-f812-46aa-aa4c-299a41cada1c",
+            "containerId": "",
+            "name": "http://localhost/uts_perpustakaan/uts_perpustakaan/api/anggota.php?id=1",
+            "url": "http://localhost/uts_perpustakaan/uts_perpustakaan/api/anggota.php?id=999",
+            "method": "PUT",
+            "sortNum": 30000,
+            "created": "2026-11-07T07:20:51.246Z",
+            "modified": "2026-11-07T07:20:51.246Z",
+            "headers": [],
+            "params": [
+                {
+                    "name": "id",
+                    "value": "999",
+                    "isPath": false
+                }
+            ],
+            "body": {
+                "type": "json",
+                "raw": [
+                    "{",
+                    "  \"kode_anggota\":\"AG001\",",
+                    "  \"nama_anggota\":\"Delvin\",",
+                    "  \"alamat\":\"Jakarta\",",
+                    "  \"no_hp\":\"081234567890\"",
+                    "}"
+                ],
+                "form": []
+            }
+        },
+        {
+            "_id": "a251ba2b-34e1-4f88-b41a-bf8da9bb391e",
+            "colId": "2a37f2f4-f812-46aa-aa4c-299a41cada1c",
+            "containerId": "",
+            "name": "http://localhost/uts_perpustakaan/uts_perpustakaan/api/anggota.php?id=1",
+            "url": "http://localhost/uts_perpustakaan/uts_perpustakaan/api/anggota.php?id=1",
+            "method": "PUT",
+            "sortNum": 50000,
+            "created": "2026-11-07T07:27:50.575Z",
+            "modified": "2026-11-07T07:27:50.575Z",
+            "headers": [],
+            "params": [
+                {
+                    "name": "id",
+                    "value": "1",
+                    "isPath": false
+                }
+            ],
+            "body": {
+                "type": "json",
+                "raw": [
+                    "{",
+                    "  \"kode_anggota\":\"\",",
+                    "  \"nama_anggota\":\"\",",
+                    "  \"alamat\":\"\",",
+                    "  \"no_hp\":\"\"",
+                    "}"
+                ],
+                "form": []
+            }
+        }
+    ],
+    "ref": "eWby-Y3iWN-qCER_5fcQk9b3YEKh7MpYfYNWJp0PoxOu5c63WSNc9A1_Jl-NwdFYanOwVghsV3LS3OctNOkdKw"
+}
